@@ -91,7 +91,10 @@ class LoginTest extends TestCase
             ->assertStatus(200)
             ->assertJson(['success' => true]);
 
-        // token yang sama harus udah gak valid lagi
+        // reset cache dulu biar request berikutnya
+        // query ulang ke database
+        $this->app['auth']->forgetGuards();
+
         $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/me')
             ->assertStatus(401);
