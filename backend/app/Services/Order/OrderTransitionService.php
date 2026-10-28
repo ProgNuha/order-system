@@ -18,48 +18,62 @@ class OrderTransitionService
 
     public function markAsPaid(Order $order): Order
     {
-        $this->stateMachine->assertCanTransition($order, OrderStatus::PAID);
+        return DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-        $order->update([
-            'status' => OrderStatus::PAID,
-            'paid_at' => now(),
-        ]);
+            $this->stateMachine->assertCanTransition($locked, OrderStatus::PAID);
 
-        return $order->fresh();
+            $locked->update([
+                'status' => OrderStatus::PAID,
+                'paid_at' => now(),
+            ]);
+
+            return $locked->fresh();
+        });
     }
 
     public function markAsShipped(Order $order): Order
     {
-        $this->stateMachine->assertCanTransition($order, OrderStatus::SHIPPED);
+        return DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-        $order->update([
-            'status' => OrderStatus::SHIPPED,
-            'shipped_at' => now(),
-        ]);
+            $this->stateMachine->assertCanTransition($locked, OrderStatus::SHIPPED);
 
-        return $order->fresh();
+            $locked->update([
+                'status' => OrderStatus::SHIPPED,
+                'shipped_at' => now(),
+            ]);
+
+            return $locked->fresh();
+        });
     }
 
     public function markAsCompleted(Order $order): Order
     {
-        $this->stateMachine->assertCanTransition($order, OrderStatus::COMPLETED);
+        return DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-        $order->update([
-            'status' => OrderStatus::COMPLETED,
-            'completed_at' => now(),
-        ]);
+            $this->stateMachine->assertCanTransition($locked, OrderStatus::COMPLETED);
 
-        return $order->fresh();
+            $locked->update([
+                'status' => OrderStatus::COMPLETED,
+                'completed_at' => now(),
+            ]);
+
+            return $locked->fresh();
+        });
     }
 
     public function cancel(Order $order, string $reason): Order
     {
-        $this->stateMachine->assertCanTransition($order, OrderStatus::CANCELLED);
-
         return DB::transaction(function () use ($order, $reason) {
-            $order->load('items.product');
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-            foreach ($order->items as $item) {
+            $this->stateMachine->assertCanTransition($locked, OrderStatus::CANCELLED);
+
+            $locked->load('items.product');
+
+            foreach ($locked->items as $item) {
                 $product = $item->product()->lockForUpdate()->first();
                 $newStock = $product->stock + $item->quantity;
                 $product->update(['stock' => $newStock]);
@@ -70,19 +84,19 @@ class OrderTransitionService
                     'quantity_change' => $item->quantity,
                     'stock_after' => $newStock,
                     'reference_type' => 'order',
-                    'reference_id' => $order->id,
-                    'note' => "Pembatalan order {$order->order_number}",
-                    'created_by' => $order->created_by,
+                    'reference_id' => $locked->id,
+                    'note' => "Pembatalan order {$locked->order_number}",
+                    'created_by' => $locked->created_by,
                 ]);
             }
 
-            $order->update([
+            $locked->update([
                 'status' => OrderStatus::CANCELLED,
                 'cancelled_at' => now(),
                 'cancel_reason' => $reason,
             ]);
 
-            return $order->fresh();
+            return $locked->fresh();
         });
     }
 }
