@@ -21,11 +21,13 @@ class Product extends Model
         'product_code',
         'product_name',
         'stock',
+        'low_stock_threshold',
         'price',
     ];
 
     protected $casts = [
         'stock' => 'integer',
+        'low_stock_threshold' => 'integer',
         'price' => 'decimal:2',
     ];
 

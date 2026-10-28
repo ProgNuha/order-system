@@ -29,6 +29,7 @@ class StoreProductRequest extends FormRequest
             'product_code' => ['required', 'string', 'max:255', 'unique:products,product_code'],
             'product_name' => ['required', 'string', 'max:255'],
             'stock' => ['required', 'integer', 'min:0'],
+            'low_stock_threshold' => ['sometimes', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0.01'],
         ];
     }

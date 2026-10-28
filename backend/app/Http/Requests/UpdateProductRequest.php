@@ -31,6 +31,7 @@ class UpdateProductRequest extends FormRequest
             'product_code' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('products', 'product_code')->ignore($productId)],
             'product_name' => ['sometimes', 'required', 'string', 'max:255'],
             'stock' => ['sometimes', 'required', 'integer', 'min:0'],
+            'low_stock_threshold' => ['sometimes', 'integer', 'min:0'],
             'price' => ['sometimes', 'required', 'numeric', 'min:0.01'],
         ];
     }

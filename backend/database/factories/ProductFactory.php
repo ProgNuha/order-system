@@ -14,6 +14,7 @@ class ProductFactory extends Factory
             'product_code' => 'P'.str_pad((string) $this->faker->unique()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
             'product_name' => ucfirst($this->faker->words(2, true)),
             'stock' => $this->faker->numberBetween(10, 200),
+            'low_stock_threshold' => 10,
             'price' => $this->faker->numberBetween(5, 500) * 1000,
         ];
     }
