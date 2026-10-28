@@ -60,6 +60,26 @@ jobs:
       - name: Static analysis (Larastan)
         run: ./vendor/bin/phpstan analyse --memory-limit=512M
 
+      - name: Start test server
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: azatech_order_test
+          DB_USERNAME: azatech
+          DB_PASSWORD: secret
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: 6379
+          APP_URL: http://127.0.0.1:8000
+          PHP_CLI_SERVER_WORKERS: 25
+        run: |
+          php artisan migrate --force
+          php artisan serve --host=127.0.0.1 --port=8000 --no-reload &
+          for i in $(seq 1 20); do
+            curl -sf http://127.0.0.1:8000/up && break
+            sleep 1
+          done
+
       - name: Run tests
         env:
           DB_CONNECTION: pgsql
@@ -70,6 +90,7 @@ jobs:
           DB_PASSWORD: secret
           REDIS_HOST: 127.0.0.1
           REDIS_PORT: 6379
+          APP_URL: http://127.0.0.1:8000
         run: php artisan test
 
       - name: Build Docker image

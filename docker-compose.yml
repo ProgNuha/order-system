@@ -7,6 +7,8 @@ services:
       - ./backend:/var/www/html
     ports:
       - "8000:8000"
+    environment:
+      PHP_CLI_SERVER_WORKERS: "25"
     env_file:
       - path: ./backend/.env
         required: false
