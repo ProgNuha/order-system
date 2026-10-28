@@ -18,6 +18,8 @@ Dikerjakan untuk Technical Test — Senior Fullstack Developer, PT Laksmada Aza 
 | Styling | Tailwind CSS v4 | — |
 | Pengujian frontend | Vitest + Testing Library | Component test untuk form pembuatan order |
 
+Catatan: tidak ada kolom/field `order_date`. `created_at` pada tabel `orders` sudah merepresentasikan tanggal order dibuat, sehingga dianggap redundan untuk ditambahkan.
+
 ## Quick Start
 
 ```bash
