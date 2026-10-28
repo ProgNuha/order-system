@@ -23,12 +23,12 @@ class OrderStateMachine
 
     public function canTransition(OrderStatus $from, OrderStatus $to): bool
     {
-        return in_array($to->value, self::TRANSITIONS[$from->value] ?? [], true);
+        return in_array($to->value, self::TRANSITIONS[$from->value], true);
     }
 
     public function assertCanTransition(Order $order, OrderStatus $to): void
     {
-        if (! $this->canTransition($order->status, $to)) {
+        if (!$this->canTransition($order->status, $to)) {
             throw new InvalidOrderTransitionException(
                 "Transisi status dari {$order->status->value} ke {$to->value} tidak diizinkan."
             );

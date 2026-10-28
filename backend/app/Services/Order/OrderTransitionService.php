@@ -14,8 +14,7 @@ class OrderTransitionService
 {
     public function __construct(
         private readonly OrderStateMachine $stateMachine,
-    ) {
-    }
+    ) {}
 
     public function markAsPaid(Order $order): Order
     {

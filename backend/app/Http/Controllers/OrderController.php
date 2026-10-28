@@ -14,8 +14,7 @@ class OrderController extends Controller
 {
     public function __construct(
         private readonly OrderTransitionService $transitions,
-    ) {
-    }
+    ) {}
 
     public function pay(Order $order): JsonResponse
     {
