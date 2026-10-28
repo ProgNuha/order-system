@@ -28,7 +28,7 @@ class OrderStateMachine
 
     public function assertCanTransition(Order $order, OrderStatus $to): void
     {
-        if (!$this->canTransition($order->status, $to)) {
+        if (! $this->canTransition($order->status, $to)) {
             throw new InvalidOrderTransitionException(
                 "Transisi status dari {$order->status->value} ke {$to->value} tidak diizinkan."
             );
