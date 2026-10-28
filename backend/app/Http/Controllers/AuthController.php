@@ -17,13 +17,14 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->validated('email'))->first();
 
-        if (! $user || ! Hash::check($request->validated('password'), $user->password)) {
+        if (!$user || !Hash::check($request->validated('password'), $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Email atau password salah.'],
             ]);
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $expiresAt = now()->addHours(24);
+        $token = $user->createToken('api-token', ['*'], $expiresAt)->plainTextToken;
 
         return response()->json([
             'success' => true,
@@ -36,6 +37,7 @@ class AuthController extends Controller
                     'role' => $user->role,
                 ],
                 'token' => $token,
+                'expires_at' => $expiresAt->toIso8601String(),
             ],
         ]);
     }

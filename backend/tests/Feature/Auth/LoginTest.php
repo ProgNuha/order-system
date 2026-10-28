@@ -81,15 +81,31 @@ class LoginTest extends TestCase
             ]);
     }
 
-    public function test_user_can_logout(): void
+    public function test_logout_revokes_the_token(): void
     {
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $response = $this->withHeader('Authorization', 'Bearer '.$token)
-            ->postJson('/api/auth/logout');
-
-        $response->assertStatus(200)
+        $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson('/api/auth/logout')
+            ->assertStatus(200)
             ->assertJson(['success' => true]);
+
+        // token yang sama harus udah gak valid lagi
+        $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson('/api/auth/me')
+            ->assertStatus(401);
+    }
+
+    public function test_token_is_invalid_after_expiration(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('test-token', ['*'], now()->addHours(24))->plainTextToken;
+
+        $this->travel(25)->hours();
+
+        $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson('/api/auth/me')
+            ->assertStatus(401);
     }
 }
