@@ -86,13 +86,13 @@ class LoginTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('test-token')->plainTextToken;
 
-        $this->withHeader('Authorization', 'Bearer ' . $token)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->postJson('/api/auth/logout')
             ->assertStatus(200)
             ->assertJson(['success' => true]);
 
         // token yang sama harus udah gak valid lagi
-        $this->withHeader('Authorization', 'Bearer ' . $token)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/me')
             ->assertStatus(401);
     }
@@ -104,7 +104,7 @@ class LoginTest extends TestCase
 
         $this->travel(25)->hours();
 
-        $this->withHeader('Authorization', 'Bearer ' . $token)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/me')
             ->assertStatus(401);
     }

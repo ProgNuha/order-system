@@ -16,7 +16,9 @@ class OrderControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $cashier;
+
     private Customer $customer;
 
     protected function setUp(): void
