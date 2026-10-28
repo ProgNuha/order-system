@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -12,7 +13,7 @@ $loginThrottle = app()->environment('production') ? 'throttle:5,1' : 'throttle:6
 
 Route::post('/auth/login', [AuthController::class, 'login'])
     ->middleware($loginThrottle);
-
+Route::get('/health', HealthController::class);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
@@ -21,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('customers', CustomerController::class);
 
     Route::get('/orders', [OrderController::class, 'index']);
-    Route::post('/orders', [OrderController::class, 'store'])->middleware('idempotent.order');
+    Route::post('/orders', [OrderController::class, 'store'])->middleware(['throttle:30,1', 'idempotent.order']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
     Route::post('/orders/{order}/pay', [OrderController::class, 'pay']);
     Route::post('/orders/{order}/ship', [OrderController::class, 'ship']);
