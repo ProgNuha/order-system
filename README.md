@@ -67,14 +67,8 @@ Untuk bagian backend (keahlian utama kandidat), kode dari AI selalu ditinjau dan
 
 Disusun berdasarkan prioritas:
 
-- **Background job invoice dan notifikasi email (poin 4.7)** — saat ini baru ada `markAsPaid()`; job class dan mailable belum dibuat. Rencana implementasi: queued job `SendPaidOrderInvoiceJob`, bersifat idempotent melalui kolom `invoice_sent_at` pada tabel `orders`, dengan `$tries = 3` dan strategi backoff.
-- **Notifikasi low-stock kepada admin (poin 4.7)** — belum diimplementasikan, menunggu penambahan kolom `low_stock_threshold`.
-- **Kolom `low_stock_threshold` pada tabel `products`** — belum ditambahkan ke migration.
+- **Background job invoice dan notifikasi email (poin 4.7)** — job queue `SendPaidOrderInvoiceJob` dan mailable sudah dibuat (idempotent melalui kolom `invoice_sent_at` pada tabel `orders`, dengan `$tries = 3` dan backoff), namun belum terintegrasi & teruji penuh ke alur `markAsPaid()` (belum di-dispatch dari sana).
+- **Notifikasi low-stock kepada admin (poin 4.7)** — kolom `low_stock_threshold` pada `products` dan flag turunan `is_low_stock` di response API sudah tersedia, namun mekanisme notifikasi aktif (email/alert) ke admin belum diimplementasikan.
 - **Endpoint `stock-adjustments`, `stock-movements` per produk, `orders/{id}/invoice`, `dashboard/summary`, `reports/sales`, dan `reports/top-products`** — belum diimplementasikan.
-- **`GET /api/health`** — belum tersedia secara eksplisit; saat ini masih menggunakan endpoint bawaan Laravel `/up`, yang hanya memeriksa koneksi database dan belum memeriksa Redis secara eksplisit.
-- **Konfigurasi CORS eksplisit** — belum dikonfigurasi, masih menggunakan pengaturan default Laravel. Perlu dibatasi ke origin frontend sebelum dianggap selesai (bukan `*`).
-- **Rate limiting pada pembuatan order** — saat ini baru diterapkan pada login, belum pada `POST /orders`.
 - **ESLint pada frontend** — belum dikonfigurasi.
 - **E2E test dengan Playwright** — tidak dikerjakan (bersifat bonus).
-
-Pendekatan lanjutan: kolom `low_stock_threshold` dan job invoice diprioritaskan lebih dahulu karena berkaitan langsung dengan requirement wajib pada poin 4.2, diikuti oleh endpoint laporan dan dashboard.
