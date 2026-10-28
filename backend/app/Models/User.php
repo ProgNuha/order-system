@@ -13,8 +13,11 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    use HasApiTokens;
+
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     protected $fillable = [
         'name',
@@ -36,13 +39,17 @@ class User extends Authenticatable
         ];
     }
 
-    // --- tambahan di bawah ini ---
-
+    /**
+     * @return HasMany<Order, $this>
+     */
     public function ordersCreated(): HasMany
     {
         return $this->hasMany(Order::class, 'created_by');
     }
 
+    /**
+     * @return HasMany<StockMovement, $this>
+     */
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class, 'created_by');
