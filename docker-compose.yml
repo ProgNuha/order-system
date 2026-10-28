@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
     ports:
       - "8000:8000"
     environment:
@@ -53,6 +54,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
@@ -111,3 +113,4 @@ services:
 
 volumes:
   pgdata:
+  backend_vendor:
