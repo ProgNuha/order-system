@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Frontend (bakal kepake pas Next.js udah di-scaffold)
+frontend/node_modules/
+frontend/.next/
+frontend/.env*.local
