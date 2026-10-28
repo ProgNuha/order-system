@@ -70,7 +70,7 @@ const { mutate, isPending } = useMutation({
       submitError.value = ''
       for (const [key, messages] of Object.entries(respErrors)) {
         const veePath = key.replace(/\.(\d+)\./g, '[$1].').replace(/\.(\d+)$/, '[$1]')
-        setFieldError(veePath, (messages as string[])[0])
+        setFieldError(veePath as any, (messages as string[])[0])
       }
     } else {
       submitError.value = err.response?.data?.message || 'Gagal membuat order.'

@@ -33,17 +33,23 @@ vi.mock('@/api/customers', () => ({
   ),
 }))
 
-const createOrderMock = vi.fn(() =>
-  Promise.resolve({
+const { createOrderMock } = vi.hoisted(() => ({
+  createOrderMock: vi.fn(async (_payload: unknown, _idempotencyKey: string) => ({
     data: {
       success: true,
       message: 'OK',
-      data: { id: 1, order_number: 'INV-1', customer_id: 'uuid-1', status: 'PENDING', total_amount: '10000.00', paid_at: null, shipped_at: null, completed_at: null, cancelled_at: null, cancel_reason: null, created_at: '', updated_at: '', items: [], status_history: [] },
+      data: {
+        id: 1, order_number: 'INV-1', customer_id: 'uuid-1', status: 'PENDING',
+        total_amount: '10000.00', paid_at: null, shipped_at: null, completed_at: null,
+        cancelled_at: null, cancel_reason: null, created_at: '', updated_at: '',
+        items: [], status_history: [],
+      },
     },
-  })
-)
+  })),
+}))
+
 vi.mock('@/api/orders', () => ({
-  createOrder: (...args: unknown[]) => createOrderMock(...args),
+  createOrder: createOrderMock,
 }))
 
 function renderWithPlugins() {
@@ -78,7 +84,7 @@ describe('CreateOrderView', () => {
 
     await waitFor(() => expect(createOrderMock).toHaveBeenCalledTimes(1))
 
-    const [payload] = createOrderMock.mock.calls[0] as [any, string]
+    const [payload] = createOrderMock.mock.calls[0]
     expect(payload).toEqual({ customer_id: 'uuid-1', items: [{ product_id: 1, quantity: 1 }] })
   })
 })
