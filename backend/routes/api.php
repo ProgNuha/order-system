@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('customers', CustomerController::class);
 
-    Route::apiResource('orders', OrderController::class)->only(['index', 'store', 'show']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::post('/orders', [OrderController::class, 'store'])->middleware('idempotent.order');
+    Route::get('/orders/{order}', [OrderController::class, 'show']);
     Route::post('/orders/{order}/pay', [OrderController::class, 'pay']);
     Route::post('/orders/{order}/ship', [OrderController::class, 'ship']);
     Route::post('/orders/{order}/complete', [OrderController::class, 'complete']);
