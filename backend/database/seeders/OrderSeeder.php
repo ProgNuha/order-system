@@ -37,7 +37,7 @@ class OrderSeeder extends Seeder
             $creator = $users->random();
 
             $order = Order::create([
-                'order_number' => 'INV-' . $createdAt->format('Ymd') . '-' . str_pad((string) $i, 4, '0', STR_PAD_LEFT),
+                'order_number' => 'INV-'.$createdAt->format('Ymd').'-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT),
                 'customer_id' => $customer->id,
                 'created_by' => $creator->id,
                 'status' => 'PENDING',
