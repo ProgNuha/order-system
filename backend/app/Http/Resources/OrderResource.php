@@ -33,6 +33,36 @@ class OrderResource extends JsonResource
             'cancel_reason' => $this->cancel_reason,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'items' => OrderItemResource::collection($this->whenLoaded('items')),
+            'status_history' => $this->statusHistory(),
         ];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function statusHistory(): array
+    {
+        $history = [
+            ['status' => 'PENDING', 'at' => $this->created_at],
+        ];
+
+        if ($this->paid_at) {
+            $history[] = ['status' => 'PAID', 'at' => $this->paid_at];
+        }
+
+        if ($this->shipped_at) {
+            $history[] = ['status' => 'SHIPPED', 'at' => $this->shipped_at];
+        }
+
+        if ($this->completed_at) {
+            $history[] = ['status' => 'COMPLETED', 'at' => $this->completed_at];
+        }
+
+        if ($this->cancelled_at) {
+            $history[] = ['status' => 'CANCELLED', 'at' => $this->cancelled_at, 'reason' => $this->cancel_reason];
+        }
+
+        return $history;
     }
 }
