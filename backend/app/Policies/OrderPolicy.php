@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Policies;
+
+use App\Models\Order;
+use App\Models\User;
+
+class OrderPolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function pay(User $user, Order $order): bool
+    {
+        return in_array($user->role, ['admin', 'cashier'], true);
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function ship(User $user, Order $order): bool
+    {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function complete(User $user, Order $order): bool
+    {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function cancel(User $user, Order $order): bool
+    {
+        return $user->isAdmin();
+    }
+}
