@@ -19,6 +19,15 @@ services:
         condition: service_started
     command: sh -c "php artisan serve --host=0.0.0.0 --port=8000 --no-reload"
 
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    depends_on:
+      - api
+
   worker:
     build:
       context: ./backend
